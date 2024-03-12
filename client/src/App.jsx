@@ -1,39 +1,45 @@
-// client/src/App.js
-import React, { useState } from "react";
+import { useState } from "react";
 import axios from "axios";
-import "./App.css";
-function App() {
-	const [file, setFile] = useState(null);
-	const [images, setImages] = useState([]);
-	const handleFileChange = (e) => {
-		setFile(e.target.files[0]);
-	};
-	const handleUpload = async () => {
-		const formData = new FormData();
-		formData.append("image", file);
-		await axios.post("http://localhost:5000/upload", formData);
-		fetchImages();
-	};
-	const fetchImages = async () => {
-		const response = await axios.get("http://localhost:5000/image");
-		setImages(response.data);
-	};
-	return (
-		<div>
-			<input type="file" onChange={handleFileChange} />
-			<button onClick={handleUpload}>Upload</button>
-			<div>
-				{images.map((image) => (
-					<img
-						key={image.id}
-						src={`data:${image.mimetype};base64,${image.data.toString(
-							"base64"
-						)}`}
-						alt="Uploaded"
-					/>
-				))}
-			</div>
-		</div>
-	);
-}
+
+const App = () => {
+    const [name, setName] = useState('');
+    const [password, setPassword] = useState('');
+
+    const registerHandler = async () => {
+        try {
+            const response = await axios.post("register", {
+                name,
+                password,
+            });
+            if (response.status === 201) {
+                console.log("Register successful!");
+            } else {
+                console.error("Register failed:", response.statusText);
+            }
+        } catch (error) {
+            console.error("Error during registration:", error);
+        }
+    };
+
+    return (
+        <div>
+            <input
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="username"
+            />
+            <br />
+            <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="password"
+            />
+            <br />
+            <button onClick={registerHandler}>Register</button>
+        </div>
+    );
+};
+
 export default App;
